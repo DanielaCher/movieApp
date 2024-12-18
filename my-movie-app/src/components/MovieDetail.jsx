@@ -1,11 +1,16 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { addFavorite, removeFavorite } from "../store";
+import "./MovieDetail.css";
 
 const MovieDetail = () => {
   const { movieId } = useParams();
   const [movie, setMovie] = useState(null);
   const [loading, setLoading] = useState(true);
   const apiKey = "f78a29ca41f945580f00ecd19a11d476";
+  const dispatch = useDispatch();
+  const favorites = useSelector((state) => state.favorites);
 
   useEffect(() => {
     const fetchMovieDetails = async () => {
@@ -24,7 +29,17 @@ const MovieDetail = () => {
     };
 
     fetchMovieDetails();
-  }, [movieId]);
+  }, [movieId, apiKey]);
+
+  const isFavorite = movie && favorites.includes(movie.id);
+  const handleToggleFavorite = () => {
+    console.log("Adding/Removing movie with ID:", movie.id); //TODO: Add this log
+    if (isFavorite) {
+      dispatch(removeFavorite(movie.id)); // Remove from favorites
+    } else {
+      dispatch(addFavorite(movie.id)); // Add to favorites
+    }
+  };
 
   if (loading) {
     return <p>Loading movie details...</p>;
@@ -35,7 +50,7 @@ const MovieDetail = () => {
   }
 
   return (
-    <div>
+    <div className="movie-detail">
       <h2>{movie.title}</h2>
       <img
         src={`https://image.tmdb.org/t/p/w200${movie.poster_path}`}
@@ -46,6 +61,9 @@ const MovieDetail = () => {
         {new Date(movie.release_date).toLocaleDateString()}
       </p>
       <p>{movie.overview}</p>
+      <button className="movie-detail-button" onClick={handleToggleFavorite}>
+        {isFavorite ? "Remove from Favorites" : "Add to Favorites"}
+      </button>
     </div>
   );
 };

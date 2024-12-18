@@ -18,7 +18,7 @@ function App() {
           element={<MovieList category="airing-now" />}
         />
         <Route path="/movies/:movieId" element={<MovieDetail />} />
-        <Route path="/favorites" element={<div>My Favorites</div>} />
+        <Route path="/favorites" element={<MovieList category="favorites" />} />
       </Routes>
     </Router>
   );

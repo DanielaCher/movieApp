@@ -1,9 +1,13 @@
 import React, { useEffect, useState } from "react";
 import MovieItem from "../MovieItem/MovieItem";
+import { useSelector } from "react-redux";
+import "./MovieList.css";
 
 const MovieList = ({ category }) => {
   const [movies, setMovies] = useState([]);
   const [loading, setLoading] = useState(false);
+  const favorites = useSelector((state) => state.favorites); // Access favorites from Redux
+
   const [page, setPage] = useState(1);
 
   const fetchMovies = async (pageNumber) => {
@@ -30,31 +34,53 @@ const MovieList = ({ category }) => {
       setLoading(false);
     }
   };
-
-  // Fetch movies when the component mounts or when the page changes
-  useEffect(() => {
-    fetchMovies(page);
-  }, [page, category]);
-
   // Handle loading more movies when the button is clicked
   const handleLoadMore = () => {
     setPage((prevPage) => prevPage + 1);
   };
 
+  // Fetch movies when the component mounts or when the page changes
+  useEffect(() => {
+    console.log("Favorites data in MovieList:", favorites); //TODO
+    console.log("Movies data in MovieList:", movies); //TODO
+    if (category !== "favorites") {
+      console.log("Favorites data:", favorites); //TODO: delete
+      fetchMovies(page); // Fetch movies only if the category is not favorites
+    }
+  }, [page, category, favorites]);
+
+  // Filter movies when the category is favorites
+  const displayedMovies =
+    category === "favorites"
+      ? movies
+          .filter((movie) => favorites.includes(movie.id))
+          .filter((item, index, arr) => arr.indexOf(item) === index) // Ensure no duplicates
+      : movies;
+
   return (
-    <div>
-      <h2>{category === "popular" ? "Popular Movies" : "Airing Now Movies"}</h2>
+    <div className="movie-list-container">
+      <h2 className="header">
+        {category === "favorites"
+          ? "Favorite Movies"
+          : category === "popular"
+          ? "Popular Movies"
+          : "Airing Now Movies"}
+      </h2>
       {loading && page === 1 ? (
         <p>Loading movies...</p>
       ) : (
         <ul className="movie-list">
-          {movies.map((movie) => (
+          {displayedMovies.map((movie) => (
             <MovieItem key={movie.id} movie={movie} />
           ))}
         </ul>
       )}
-      {!loading && (
-        <button onClick={handleLoadMore} disabled={loading}>
+      {!loading && category !== "favorites" && (
+        <button
+          className="movie-list-button"
+          onClick={handleLoadMore}
+          disabled={loading}
+        >
           {loading ? "Loading..." : "Load More"}
         </button>
       )}

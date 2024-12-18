@@ -1,7 +1,9 @@
 .movie-item {
     list-style: none;
     margin: 15px;
-    border: 1px solid #ddd;
+    border: 1px solid #ccc;
+    padding: 1%; /* Use percentages for padding */
+    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
     border-radius: 8px;
     overflow: hidden;
     display: flex;

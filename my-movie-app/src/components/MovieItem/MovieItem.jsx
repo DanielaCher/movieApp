@@ -6,8 +6,6 @@ const MovieItem = ({ movie }) => {
   return (
     <li className="movie-item">
       <Link to={`/movies/${movie.id}`}>
-        {" "}
-        {/* Add Link for navigation */}
         <img
           className="movie-poster"
           src={`https://image.tmdb.org/t/p/w200${movie.poster_path}`}
